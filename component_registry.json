@@ -1,0 +1,35 @@
+{
+    "version": "1.0",
+    "mappings": [
+        {
+            "figma_name": "button",
+            "component": "Button",
+            "path": "@/components/ui/button",
+            "props": {}
+        },
+        {
+            "figma_name": "input",
+            "component": "Input",
+            "path": "@/components/ui/input",
+            "props": {}
+        },
+        {
+            "figma_name": "card",
+            "component": "Card",
+            "path": "@/components/ui/card",
+            "props": {}
+        },
+        {
+            "figma_name": "badge",
+            "component": "Badge",
+            "path": "@/components/ui/badge",
+            "props": {}
+        },
+        {
+            "figma_name": "avatar",
+            "component": "Avatar",
+            "path": "@/components/ui/avatar",
+            "props": {}
+        }
+    ]
+}
