@@ -1,0 +1,23 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment
+.env
+.venv
+env/
+venv/
+
+# Database
+events.db
+
+# Logs and Reports
+*.log
+pending_batch.json
+mcp_audit.jsonl
+
+# OS
+.DS_Store
+Thumbs.db
