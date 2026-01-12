@@ -417,13 +417,8 @@ async def fetch_figma_pattern(ctx: ToolContext, args: Dict[str, Any]) -> Dict[st
                 resp = await client.get(url, headers=headers, timeout=15)
                 
                 if resp.status_code == 429:
-                    if attempt < max_retries - 1:
-                        retry_after = int(resp.headers.get('Retry-After', base_delay * (2 ** attempt)))
-                        logger.warning(f"[Figma Rate Limit] Attempt {attempt+1} failed. Sleeping {retry_after}s...")
-                        await asyncio.sleep(retry_after)
-                        continue
-                    else:
-                        raise RuntimeError("Figma API rate limit exceeded.")
+                    logger.warning("[Figma Rate Limit] 429 Received. Triggering Immediate Mock Fallback.")
+                    raise RuntimeError("Rate limit hit - forcing mock fallback")
                 
                 resp.raise_for_status()
                 data = resp.json()
@@ -455,20 +450,29 @@ async def fetch_figma_pattern(ctx: ToolContext, args: Dict[str, Any]) -> Dict[st
                     "tokens": tokens
                 }
                 
-            except httpx.RequestError as e:
-                logger.error(f"Figma API connection error: {e}")
+            except Exception as e:
+                logger.error(f"Figma API error (Attempt {attempt+1}): {e}")
                 if attempt < max_retries - 1:
                     await asyncio.sleep(base_delay * (attempt + 1))
                     continue
-                raise RuntimeError(f"Figma API connection error: {str(e)}")
-            except httpx.HTTPStatusError as e:
-                logger.error(f"Figma API status error: {e}")
-                raise RuntimeError(f"Figma API error {e.response.status_code}: {e}")
-            except Exception as e:
-                logger.error(f"Figma processing error: {e}")
-                raise RuntimeError(f"Figma API processing error: {str(e)}")
                 
-    raise RuntimeError("Failed to fetch Figma design after multiple attempts")
+                # FALLBACK TO MOCK
+                logger.warning("⚠️ Limits Exceeded! Switching to MOCK MODE.")
+                import json
+                mock_path = "mock_figma_response.json"
+                if os.path.exists(mock_path):
+                     with open(mock_path, "r") as f:
+                         data = json.load(f)
+                     return {
+                        "file_key": file_key,
+                        "name": data.get("name", "Mock Design"),
+                        "last_modified": data.get("lastModified"),
+                        "nodes": [data["document"]],
+                        "tokens": {"colors": {}, "components": {}, "styles": {}}
+                     }
+                raise RuntimeError(f"Figma API failed and no mock found: {str(e)}")
+
+    raise RuntimeError("Failed to fetch Figma design")
 
 async def download_figma_assets(ctx: ToolContext, file_key: str, assets: List[Dict[str, Any]], output_dir: str = "public/assets") -> List[Dict[str, Any]]:
     """

@@ -7,7 +7,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Import our modular tools and utils
+# Import our modular tools and utils
 from mcp_core.context import ToolContext
+from mcp_core.config import ServerConfig
 from mcp_core.tools import figma
 from mcp_core.utils.github_automation import create_figma_update_pr
 
@@ -95,9 +97,21 @@ async def process_pending_events(ctx: ToolContext):
 async def main():
     logger.info("Figma-to-GitHub Automation Worker Started")
     
+    # Initialize proper configuration
+    base_dir = Path(__file__).parent.resolve()
+    config = ServerConfig(
+        allowed_repos=["*"],
+        allowed_roots=[
+            Path.home() / "Desktop", 
+            base_dir,
+            base_dir.parent
+        ],
+        max_file_size=1_000_000
+    )
+    
     # Initialize a mock context for our tools
     ctx = ToolContext(
-        config=None, security=None, audit=None, 
+        config=config, security=None, audit=None, 
         search_config=None, approval_secret="automation-secret"
     )
 
