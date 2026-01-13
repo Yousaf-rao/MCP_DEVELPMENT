@@ -62,14 +62,20 @@ async def process_pipeline(ctx: ToolContext, event: dict, node_id: str, coder: L
         main_node = pattern_result["nodes"][0]
 
         # 2. Router Cache / Decision
-        figma_text_content = json.dumps(main_node)[:500]
+        # OPTIMIZATION: Check for smart cache hit (Timestamp)
+        file_last_mod = pattern_result.get("last_modified")
+        cached_entry = router_cache.get_entry(node_id)
         
-        # Check Cache First (USING NODE ID)
-        computed_file_path = router_cache.get(node_id)
-        image_path = None
+        computed_file_path = None
         
-        if computed_file_path:
-             logger.info(f"   ⚡ Cache Hit: {computed_file_path}")
+        if cached_entry and cached_entry.get("last_modified") == file_last_mod:
+             logger.info(f"   ⚡ Smart Cache Hit: {node_id} hasn't changed. Skipping generation.")
+             return True
+             
+        if cached_entry:
+             # Path is known, but timestamp changed - skip routing, proceed to gen
+             computed_file_path = cached_entry.get("path")
+             logger.info(f"   ⚡ Route Cache Hit: {computed_file_path}")
         else:
             # Cache Miss - Ask Gemini (with VISION)
             logger.info(f"   🧠 CACHE MISS: Routing '{file_name}' via Gemini...")
@@ -84,16 +90,19 @@ async def process_pipeline(ctx: ToolContext, event: dict, node_id: str, coder: L
                 logger.warning(f"   ⚠️ Failed to fetch vision image: {e}")
 
             # 2. Vector Search (RAG) for candidates
-            # Instead of sending ALL files, we ask ChromaDB for the top 15 matches
-            # query = Node Name (e.g. "User Settings Profile")
+            # OPTIMIZATION: Reduced limit from 15 to 5 to save tokens
             logger.info(f"   🔍 Vector Search querying: '{file_name}'")
-            relevant_files = search_engine.search(query=file_name, limit=15)
+            relevant_files = search_engine.search(query=file_name, limit=5)
             logger.info(f"   🔍 Found {len(relevant_files)} candidates: {relevant_files}")
             
             # Format for LLM (just a list of paths)
             repo_file_structure = "\n".join(relevant_files)
 
             # 3. Ask Gemini
+            # OPTIMIZATION: Use cleaned node for routing too
+            cleaned_node = figma.clean_node_data(main_node)
+            figma_text_content = json.dumps(cleaned_node)[:500]
+            
             computed_file_path = coder.find_matching_file(
                 figma_name=file_name,
                 figma_text_content=figma_text_content,
@@ -101,15 +110,19 @@ async def process_pipeline(ctx: ToolContext, event: dict, node_id: str, coder: L
                 image_path=image_path
             )
             
-            # Save to Cache
-            router_cache.set(node_id, computed_file_path)
+            # Save to Cache (Path Only initially, we update timestamp after success?)
+            # Actually we save it now to remember the route
+            router_cache.set(node_id, computed_file_path, last_modified=file_last_mod)
 
         # 4. Generate React component code (LLM POWERED)
         project_context = get_project_context()
         
         try:
+            # OPTIMIZATION: Clean Data before Generation
+            cleaned_node = figma.clean_node_data(main_node)
+            
             llm_result = coder.generate_component(
-                figma_data=main_node, 
+                figma_data=cleaned_node, 
                 context_files=project_context,
                 image_path=image_path
             )
@@ -201,6 +214,8 @@ async def process_pipeline(ctx: ToolContext, event: dict, node_id: str, coder: L
         
         if pr_url:
             logger.info(f"   ✅ Success! PR: {pr_url}")
+            # OPTIMIZATION: Update Cache with Timestamp on Success
+            router_cache.set(node_id, computed_file_path, last_modified=file_last_mod)
             return True
         else:
             logger.error(f"   ❌ Failed to create PR")

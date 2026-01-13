@@ -36,12 +36,23 @@ class RouterCache:
         return node_id
 
     def get(self, node_id: str) -> Optional[str]:
-        if node_id in self.cache:
-            path = self.cache[node_id]
-            logger.info(f"⚡ Cache Hit: '{node_id}' -> {path}")
-            return path
+        """Backwards compatible get (returns path only)."""
+        entry = self.cache.get(node_id)
+        if isinstance(entry, dict) and "path" in entry:
+            logger.info(f"⚡ Cache Hit: '{node_id}' -> {entry['path']}")
+            return entry["path"]
+        # Legacy support if cache has string
+        if isinstance(entry, str):
+            return entry
         return None
 
-    def set(self, node_id: str, path: str):
-        self.cache[node_id] = path
+    def get_entry(self, node_id: str) -> Optional[dict]:
+        """Returns full cache entry with metadata."""
+        return self.cache.get(node_id)
+
+    def set(self, node_id: str, path: str, last_modified: str = None):
+        self.cache[node_id] = {
+            "path": path,
+            "last_modified": last_modified
+        }
         self._save_cache()

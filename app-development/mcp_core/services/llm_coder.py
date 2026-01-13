@@ -17,8 +17,10 @@ class LLMCoder:
         else:
             genai.configure(api_key=api_key)
         
-        # 2. Select Model
-        self.model_name = "gemini-flash-latest"
+        # 2. Select Models (Optimization)
+        self.flash_model = "gemini-1.5-flash"
+        self.pro_model = "gemini-1.5-pro"
+        self.model_name = self.flash_model # Default fallback
         
         # 3. Load Project Config
         self.config = self._load_project_config()
@@ -75,8 +77,9 @@ class LLMCoder:
         node_name = figma_data.get("name", "Component")
         
         # Re-init model object to ensure config is picked up if set runtime
+        # GENERATION = PRO MODEL (Smarter)
         model = genai.GenerativeModel(
-            model_name=self.model_name, 
+            model_name=self.pro_model, 
             generation_config={"response_mime_type": "application/json"}
         )
         
@@ -180,8 +183,9 @@ class LLMCoder:
         if not os.getenv("GEMINI_API_KEY"):
              raise ValueError("GEMINI_API_KEY is missing from .env")
              
+        # ROUTING = FLASH MODEL (Fast/Cheap)
         model = genai.GenerativeModel(
-            model_name=self.model_name, 
+            model_name=self.flash_model, 
             generation_config={"response_mime_type": "application/json"}
         )
 
@@ -235,7 +239,8 @@ class LLMCoder:
         """
         Asks Gemini to fix compilation errors.
         """
-        model = genai.GenerativeModel(model_name=self.model_name)
+        # FIXING = FLASH MODEL (Fast)
+        model = genai.GenerativeModel(model_name=self.flash_model)
         
         prompt = f"""
         CRITICAL ERROR: The code you generated failed to compile.
