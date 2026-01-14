@@ -18,8 +18,8 @@ class LLMCoder:
             genai.configure(api_key=api_key)
         
         # 2. Select Models (Optimization)
-        self.flash_model = "gemini-1.5-flash"
-        self.pro_model = "gemini-1.5-pro"
+        self.flash_model = "gemini-2.5-flash"
+        self.pro_model = "gemini-2.5-flash" # Use Flash to avoid Quota limits
         self.model_name = self.flash_model # Default fallback
         
         # 3. Load Project Config
