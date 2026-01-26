@@ -1,12 +1,17 @@
-<<<<<<< HEAD
-# 🤖 LogicPatch: Figma-to-React Autonomous Agent
+# LogicPatch Automation 🚀
 
-A **Headless Software Engineer** that monitors Figma designs via comments, generates production-grade React code using Vision AI, and creates GitLab Merge Requests automatically.
+![Status](https://img.shields.io/badge/Status-Active-success)
+![Python](https://img.shields.io/badge/Python-3.11+-blue)
+![React](https://img.shields.io/badge/React-18-blue)
 
-![Architecture](https://img.shields.io/badge/Architecture-Headless%20Git%20Sync-blue)
-![AI](https://img.shields.io/badge/AI-Gemini%20Flash-orange)
-![Search](https://img.shields.io/badge/RAG-ChromaDB%20Vector%20Search-green)
-![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
+**LogicPatch** is an advanced AI-powered pipeline that converts Figma designs into production-ready React code automatically.
+
+## ✨ Key Features
+- **Real-time Sync:** Detects Figma changes via Webhooks or Polling.
+- **AI-Powered:** Uses Gemini 2.0 to understand design intent.
+- **Self-Healing:** Validates generated code and fixes errors automatically.
+- **Visual RAG:** Uses computer vision to match design aesthetics.
+ng Vision AI, and creates GitLab Merge Requests automatically.
 
 ---
 
