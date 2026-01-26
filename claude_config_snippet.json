@@ -1,0 +1,18 @@
+{
+    "preferences": {
+        "menuBarEnabled": true
+    },
+    "mcpServers": {
+        "repo-tools": {
+            "command": "python",
+            "args": [
+                "-m",
+                "mcp_server"
+            ],
+            "cwd": "C:\\Users\\Yousaf\\Downloads\\MCP-development\\app-development",
+            "en": {
+                "PYTHONPATH": "C:\\Users\\Yousaf\\AppData\\Local\\Programs\\Python\\Python311\\python.exe"
+            }
+        }
+    }
+}

@@ -1,0 +1,46 @@
+{
+    "active_profile": "web_mui",
+    "profiles": {
+        "web_tailwind": {
+            "project_type": "Next.js 14 (App Router)",
+            "styling": "Tailwind CSS with clsx",
+            "import_alias": "@/",
+            "rules": [
+                "Use functional components",
+                "Use lucide-react",
+                "Do not use default exports"
+            ]
+        },
+        "web_mui": {
+            "project_type": "React",
+            "styling": "Material UI (MUI v5)",
+            "import_alias": "src/",
+            "rules": [
+                "Use the 'sx' prop for styling",
+                "Use <Stack> or <Box> for layout",
+                "Use @mui/icons-material",
+                "Do not use standard CSS classes"
+            ]
+        },
+        "mobile_native": {
+            "project_type": "React Native (Expo)",
+            "styling": "NativeWind",
+            "import_alias": "@/",
+            "rules": [
+                "Use <View> and <Text> components",
+                "Use 'className' prop for styling (NativeWind)",
+                "Do not use CSS units like 'px' or 'rem'"
+            ]
+        },
+        "web_styled": {
+            "project_type": "React",
+            "styling": "Styled Components",
+            "import_alias": "src/",
+            "rules": [
+                "No inline styles",
+                "Create styled wrappers at the bottom of the file",
+                "Use theme provider variables"
+            ]
+        }
+    }
+}

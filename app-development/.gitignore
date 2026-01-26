@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Secrets
 .env
 .env.*
@@ -48,30 +47,5 @@ coverage/
 Thumbs.db
 Desktop.ini
 
-# Tunnel executables
-ngrok.exe
-=======
-.env
-__pycache__/
-*.pyc
-.pytest_cache/
-mcp_audit.jsonl
-RECENT_WORK_SUMMARY.md
-PROJECT_STATUS.md
-mcp_validation_checklist.md
-PROJECT_PROGRESS_SUMMARY.md
-CODEBASE_ANALYSIS.md
-FIGMA_WORKFLOW_ANALYSIS.md
-test_output.txt
-test_results.txt
-.env.example
-
-
-
-venv/
-SETUP_VENV.md
-
->>>>>>> d06dac19010c3e2f3fff8aa92dad6ccd137cd9b7
-
-events.db
-chroma_db/
+# Cloudflare Tunnel
+cloudflared.exe
