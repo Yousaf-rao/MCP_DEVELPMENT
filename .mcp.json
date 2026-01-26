@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "repo-tools": {
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_server"
+      ],
+      "env": {
+        "PYTHONPATH": "."
+      }
+    }
+  }
+}

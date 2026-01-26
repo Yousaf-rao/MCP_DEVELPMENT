@@ -1,0 +1,12 @@
+{
+    "webhook_id": "test_evt_001",
+    "event_type": "FILE_UPDATE",
+    "file_key": "abc123xyz",
+    "file_name": "Design System - Components",
+    "timestamp": "2025-12-30T11:33:00Z",
+    "passcode": "test",
+    "triggered_by": {
+        "id": "12345",
+        "handle": "designer@example.com"
+    }
+}
